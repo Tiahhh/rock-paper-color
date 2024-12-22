@@ -34,6 +34,7 @@ const Index = () => {
   const [currentObject, setCurrentObject] = useState("rock");
   const [userInput, setUserInput] = useState("");
   const [score, setScore] = useState(0);
+  const [highScore, setHighScore] = useState(0);
   const [gameOver, setGameOver] = useState(false);
   const [usedAnswers, setUsedAnswers] = useState<string[]>([]);
   const { toast } = useToast();
@@ -66,22 +67,30 @@ const Index = () => {
       });
       setScore(score + 1);
       
+      // Update high score if current score is higher
+      if (score + 1 > highScore) {
+        setHighScore(score + 1);
+      }
+      
       // If the answer exists as a key in objectBeaters, use it as next object
       if (objectBeaters[answer]) {
         setCurrentObject(answer);
       } else {
-        // If we don't have more objects, player wins
+        // If we don't have the object defined, cycle back to rock
+        setCurrentObject("rock");
         toast({
-          title: "Congratulations! 🏆",
-          description: `You've won with a score of ${score + 1}!`,
+          title: "Level Complete! 🌟",
+          description: "Starting over with rock. Keep going!",
         });
-        setGameOver(true);
       }
     } else {
       // Wrong answer
+      if (score > highScore) {
+        setHighScore(score);
+      }
       toast({
         title: "Game Over! ❌",
-        description: `${answer} doesn't beat ${currentObject}. Your final score: ${score}`,
+        description: `${answer} doesn't beat ${currentObject}. Final score: ${score}`,
         variant: "destructive",
       });
       setGameOver(true);
@@ -116,8 +125,9 @@ const Index = () => {
               {objectBeaters[currentObject].emoji}
             </div>
             
-            <div className="text-center mb-4">
+            <div className="text-center mb-4 space-y-2">
               <p className="text-2xl font-bold">Score: {score}</p>
+              <p className="text-xl text-muted-foreground">High Score: {highScore}</p>
             </div>
             
             <form onSubmit={handleSubmit} className="space-y-4">
