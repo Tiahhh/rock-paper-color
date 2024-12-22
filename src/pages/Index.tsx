@@ -76,12 +76,16 @@ const Index = () => {
       if (objectBeaters[answer]) {
         setCurrentObject(answer);
       } else {
-        // If we don't have the object defined, cycle back to rock
-        setCurrentObject("rock");
+        // Wrong answer since we can't continue with this object
+        if (score > highScore) {
+          setHighScore(score);
+        }
         toast({
-          title: "Level Complete! 🌟",
-          description: "Starting over with rock. Keep going!",
+          title: "Game Over! 🎮",
+          description: `Great job! But we don't have any objects that can beat ${answer}. Final score: ${score}`,
+          variant: "destructive",
         });
+        setGameOver(true);
       }
     } else {
       // Wrong answer
